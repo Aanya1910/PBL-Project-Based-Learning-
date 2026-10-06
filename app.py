@@ -6,6 +6,8 @@ import numpy as np
 import plotly.graph_objects as go
 import plotly.express as px
 from datetime import datetime, timedelta
+from utils.preprocessing import handle_missing_values, cap_outliers
+from utils.feature_engineering import create_all_features, prepare_train_test_split
 import pickle
 
 st.set_page_config(
@@ -56,22 +58,32 @@ st.markdown("""
 @st.cache_data
 def load_data():
     """
-    Load the NN5 dataset.
-    For now, we'll create sample data if the file doesn't exist.
+    Load and preprocess the NN5 dataset.
     """
     try:
-      
-        df = pd.read_csv(
-            'data/nn5_daily_dataset_without_missing_values.ts',
-            sep='\t',
-            index_col=0
-        )
-        df.index = pd.to_datetime(df.index)
+        # Try to load cleaned data first
+        df = pd.read_csv('data/nn5_cleaned.csv', index_col=0, parse_dates=True)
         return df
     except FileNotFoundError:
-      
-        st.warning("⚠️ NN5 dataset not found. Using sample data for demo.")
-        return generate_sample_data()
+        try:
+            # Load raw NN5 dataset and preprocess
+            df = pd.read_csv(
+                'data/nn5_daily_dataset_without_missing_values.ts',
+                sep='\t',
+                index_col=0
+            )
+            df.index = pd.to_datetime(df.index)
+            
+            # Preprocess
+            df = handle_missing_values(df)
+            df = cap_outliers(df)
+            
+            # Save cleaned version
+            df.to_csv('data/nn5_cleaned.csv')
+            return df
+        except FileNotFoundError:
+            st.warning("⚠️ NN5 dataset not found. Using sample data for demo.")
+            return generate_sample_data()
 
 
 def generate_sample_data():
