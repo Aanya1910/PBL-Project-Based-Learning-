@@ -161,22 +161,22 @@ def create_all_features(df, target_col):
     print(f"CREATING FEATURES FOR: {target_col}")
     print("=" * 50)
     
-    # Start with target column only
+    
     df_features = df[[target_col]].copy()
     
-    # Add temporal features
+
     df_features = create_temporal_features(df_features)
     
-    # Add lag features
+
     df_features = create_lag_features(df_features, target_col, lags=[1, 7, 14, 30])
     
-    # Add rolling features
+    
     df_features = create_rolling_features(df_features, target_col, windows=[7, 14])
     
-    # Add expanding feature
+    
     df_features = create_expanding_features(df_features, target_col)
     
-    # List of feature columns (everything except target)
+    
     feature_cols = [col for col in df_features.columns if col != target_col]
     
     print(f"\n✅ Total features created: {len(feature_cols)}")
@@ -208,16 +208,16 @@ def prepare_train_test_split(df_features, target_col, test_size=0.2):
     X_train, X_test, y_train, y_test : pd.DataFrame / pd.Series
         Train and test splits
     """
-    # Calculate split point
+    
     split_idx = int(len(df_features) * (1 - test_size))
     
-    # Features (X) and target (y)
+    
     feature_cols = [col for col in df_features.columns if col != target_col]
     
     X = df_features[feature_cols]
     y = df_features[target_col]
     
-    # Chronological split
+    
     X_train = X.iloc[:split_idx]
     X_test = X.iloc[split_idx:]
     y_train = y.iloc[:split_idx]
@@ -233,7 +233,7 @@ def prepare_train_test_split(df_features, target_col, test_size=0.2):
 if __name__ == "__main__":
     print("Testing feature engineering with sample data...\n")
     
-    # Create sample data
+    
     np.random.seed(42)
     dates = pd.date_range('2023-01-01', periods=200, freq='D')
     
@@ -241,10 +241,10 @@ if __name__ == "__main__":
         'ATM_1': np.random.randint(30000, 80000, 200).astype(float)
     }, index=dates)
     
-    # Create all features
+    
     df_features, feature_cols = create_all_features(sample_df, 'ATM_1')
     
-    # Test train-test split
+    
     X_train, X_test, y_train, y_test = prepare_train_test_split(
         df_features, 'ATM_1', test_size=0.2
     )
@@ -252,3 +252,125 @@ if __name__ == "__main__":
     print(f"\n✅ Feature engineering test successful!")
     print(f"\nSample of features:")
     print(df_features.head(3))
+
+def run_feature_engineering_on_real_data(atm_column='ATM_1'):
+    """
+    Run feature engineering on the cleaned NN5 data.
+    
+    Parameters:
+    -----------
+    atm_column : str
+        Which ATM to create features for (default: 'ATM_1')
+        Can be changed to any of the 111 ATM columns.
+    
+    Returns:
+    --------
+    df_features : pd.DataFrame
+        DataFrame with all engineered features
+    feature_cols : list
+        List of feature column names
+    """
+    import os
+    
+    
+    cleaned_path = 'data/nn5_cleaned.csv'
+    
+    if not os.path.exists(cleaned_path):
+        print("❌ Cleaned data not found!")
+        print("Please run preprocessing first: python utils/preprocessing.py")
+        return None, None
+    
+    
+    df = pd.read_csv(cleaned_path, index_col=0, parse_dates=True)
+    print(f"✅ Loaded cleaned data: {df.shape}")
+    
+    
+    if atm_column not in df.columns:
+        print(f"❌ Column '{atm_column}' not found. Available: {df.columns.tolist()[:5]}...")
+        return None, None
+    
+    
+    df_features, feature_cols = create_all_features(df, atm_column)
+    
+    
+    output_path = f'data/features_{atm_column}.csv'
+    df_features.to_csv(output_path)
+    print(f"\n✅ Features saved to: {output_path}")
+    
+
+    X_train, X_test, y_train, y_test = prepare_train_test_split(
+        df_features, atm_column, test_size=0.2
+    )
+    
+    
+    X_train.to_csv('data/X_train.csv', index=True)
+    X_test.to_csv('data/X_test.csv', index=True)
+    y_train.to_csv('data/y_train.csv', index=True)
+    y_test.to_csv('data/y_test.csv', index=True)
+    
+    print(f"\n✅ Train-test splits saved to data/")
+    print(f"   X_train: {X_train.shape}")
+    print(f"   X_test:  {X_test.shape}")
+    print(f"   y_train: {y_train.shape}")
+    print(f"   y_test:  {y_test.shape}")
+    
+    
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    
+    plt.figure(figsize=(14, 10))
+    correlation = df_features.corr()
+    sns.heatmap(correlation, annot=False, cmap='coolwarm', center=0, 
+                square=True, linewidths=0.5)
+    plt.title(f'Feature Correlation Heatmap - {atm_column}')
+    plt.tight_layout()
+    plt.savefig(f'data/correlation_heatmap_{atm_column}.png', dpi=100)
+    print(f"✅ Correlation heatmap saved to: data/correlation_heatmap_{atm_column}.png")
+    
+    return df_features, feature_cols
+
+
+def run_for_all_atms(df, max_atms=111):
+    """
+    Run feature engineering for multiple ATMs.
+    Useful for comparing patterns across different ATMs.
+    
+    Parameters:
+    -----------
+    df : pd.DataFrame
+        Cleaned data
+    max_atms : int
+        Maximum number of ATMs to process
+    
+    Returns:
+    --------
+    all_features : dict
+        Dictionary mapping ATM name to feature DataFrame
+    """
+    all_features = {}
+    
+    for atm in df.columns[:max_atms]:
+        print(f"\nProcessing {atm}...")
+        df_feat, feature_cols = create_all_features(df, atm)
+        all_features[atm] = df_feat
+    
+    print(f"\n✅ Processed {len(all_features)} ATMs")
+    return all_features
+
+
+if __name__ == "__main__":
+    
+    print("=" * 60)
+    print("RUNNING FEATURE ENGINEERING ON CLEANED DATA")
+    print("=" * 60)
+    
+    df_features, feature_cols = run_feature_engineering_on_real_data(atm_column='ATM_1')
+    
+    if df_features is not None:
+        print("\n" + "=" * 60)
+        print("FEATURE ENGINEERING COMPLETE")
+        print("=" * 60)
+        print(f"\nFeatures created: {len(feature_cols)}")
+        print(f"Feature names: {feature_cols}")
+
+
