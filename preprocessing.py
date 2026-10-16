@@ -281,3 +281,60 @@ if __name__ == "__main__":
     print(f"\n✅ Pipeline test successful!")
     print(f"Cleaned shape: {df_clean.shape}")
     print(f"Missing values after: {df_clean.isna().sum().sum()}")
+
+    # ============================================================
+# RUN ON REAL NN5 DATA
+# ============================================================
+
+def run_preprocessing_on_real_data():
+    """
+    Run the complete preprocessing pipeline on the real NN5 dataset.
+    This function should be called after the dataset is downloaded.
+    """
+    import os
+    
+    # Path to the NN5 dataset
+    dataset_path = 'data/nn5_daily_dataset_without_missing_values.ts'
+    
+    # Check if file exists
+    if not os.path.exists(dataset_path):
+        print("❌ Dataset not found!")
+        print(f"Please download the NN5 dataset and place it at: {dataset_path}")
+        print("\nDownload link: https://zenodo.org/record/4656118")
+        return None
+    
+    # Run the preprocessing pipeline
+    df_clean = preprocess_pipeline(dataset_path, save_clean=True)
+    
+    if df_clean is not None:
+        print("\n✅ Preprocessing complete!")
+        print(f"Shape: {df_clean.shape}")
+        print(f"Date range: {df_clean.index.min()} to {df_clean.index.max()}")
+        print(f"\nFirst 5 rows:")
+        print(df_clean.head())
+        
+        # Save a summary
+        summary = {
+            'total_records': df_clean.shape[0] * df_clean.shape[1],
+            'num_atms': df_clean.shape[1],
+            'num_days': df_clean.shape[0],
+            'date_start': str(df_clean.index.min()),
+            'date_end': str(df_clean.index.max()),
+            'missing_values': df_clean.isna().sum().sum()
+        }
+        
+        import json
+        with open('data/preprocessing_summary.json', 'w') as f:
+            json.dump(summary, f, indent=2)
+        
+        print(f"\n✅ Summary saved to: data/preprocessing_summary.json")
+    
+    return df_clean
+
+
+if __name__ == "__main__":
+    # When run directly, execute the real data preprocessing
+    print("=" * 60)
+    print("RUNNING PREPROCESSING ON REAL NN5 DATASET")
+    print("=" * 60)
+    df = run_preprocessing_on_real_data()
