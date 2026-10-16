@@ -9,68 +9,110 @@ def load_nn5_dataset(filepath):
     """
     Load the NN5 dataset from a .ts file.
     
-    Parameters:
-    -----------
-    filepath : str
-        Path to the .ts file
+    File format:
+        T1:1996-03-18 00-00-00:13.407,14.725,20.564,...
+        T2:1996-03-18 00-00-00:11.550,13.591,15.036,...
+        ...
     
-    Returns:
-    --------
-    df : pd.DataFrame
-        DataFrame with datetime index and ATM columns
+    Each line = one ATM's complete time series.
+    The date at the start is the START date.
+    Values after are consecutive daily observations.
     """
     try:
-        df = pd.read_csv(filepath, sep='\t', index_col=0)
-        df.index = pd.to_datetime(df.index)
+        series_dict = {}
+        start_dates = {}
+        
+        with open(filepath, 'r') as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                
+                # Split into 3 parts: ATM_ID, START_DATE, VALUES
+                parts = line.split(':', 2)
+                if len(parts) != 3:
+                    continue
+                
+                atm_id = parts[0].strip()          # e.g., "T1"
+                date_str = parts[1].strip()        # e.g., "1996-03-18 00-00-00"
+                values_str = parts[2].strip()      # e.g., "13.407,14.725,..."
+                
+                # Parse start date (take only the date part)
+                start_date = pd.to_datetime(date_str.split()[0])
+                start_dates[atm_id] = start_date
+                
+                # Parse values
+                values = []
+                for v in values_str.split(','):
+                    v = v.strip()
+                    if v == '?' or v == '':
+                        values.append(np.nan)
+                    else:
+                        try:
+                            values.append(float(v))
+                        except ValueError:
+                            values.append(np.nan)
+                
+                series_dict[atm_id] = values
+        
+        # Find the maximum length across all series
+        max_len = max(len(v) for v in series_dict.values())
+        
+        # Use the earliest start date (they should all be the same)
+        common_start = min(start_dates.values())
+        
+        # Create date index
+        date_index = pd.date_range(start=common_start, periods=max_len, freq='D')
+        
+        # Build DataFrame: each column = one ATM
+        df = pd.DataFrame(index=date_index)
+        
+        for atm_id, values in series_dict.items():
+            # Pad with NaN if shorter than max_len
+            padded = values + [np.nan] * (max_len - len(values))
+            df[atm_id] = padded
+        
         print(f"✅ Loaded dataset: {df.shape[0]} days × {df.shape[1]} ATMs")
+        print(f"   Start date: {common_start.date()}")
+        print(f"   ATM IDs: {list(df.columns[:5])}... (showing first 5)")
+        
         return df
+        
     except FileNotFoundError:
         print(f"❌ File not found: {filepath}")
         return None
     except Exception as e:
         print(f"❌ Error loading dataset: {e}")
+        import traceback
+        traceback.print_exc()
         return None
-
 
 def handle_missing_values(df):
     """
     Handle missing values using weekday median replacement.
-    
-    Why weekday median?
-    -------------------
-    ATM cash demand follows weekly patterns. A missing Monday
-    should be replaced with the median of all other Mondays,
-    not the overall median.
-    
-    Parameters:
-    -----------
-    df : pd.DataFrame
-        Input DataFrame with possible NaN values
-    
-    Returns:
-    --------
-    df_clean : pd.DataFrame
-        DataFrame with no missing values
     """
     df_clean = df.copy()
     
-    # Add weekday column temporarily
-    df_clean['weekday'] = df_clean.index.dayofweek
+    # Group columns by weekday of the index
+    for col in df_clean.columns:
+        # Create a temporary series with weekday info
+        temp = pd.DataFrame({
+            'value': df_clean[col],
+            'weekday': df_clean.index.dayofweek
+        })
+        
+        # Fill NaN with weekday median
+        temp['value'] = temp.groupby('weekday')['value'].transform(
+            lambda x: x.fillna(x.median())
+        )
+        
+        # If any NaN remain (entire weekday missing), fill with overall median
+        temp['value'] = temp['value'].fillna(df_clean[col].median())
+        
+        df_clean[col] = temp['value'].values
     
-    # For each ATM column, fill NaN with weekday median
-    for col in df.columns:
-        if col != 'weekday':
-            df_clean[col] = df_clean.groupby('weekday')[col].transform(
-                lambda x: x.fillna(x.median())
-            )
-    
-    # Drop the temporary weekday column
-    df_clean = df_clean.drop(columns=['weekday'])
-    
-    # If any NaN still remain (entire weekday missing), fill with overall median
-    df_clean = df_clean.fillna(df_clean.median())
-    
-    print(f"✅ Missing values handled. Remaining NaN: {df_clean.isna().sum().sum()}")
+    total_missing = df_clean.isna().sum().sum()
+    print(f"✅ Missing values handled. Remaining NaN: {total_missing}")
     return df_clean
 
 
