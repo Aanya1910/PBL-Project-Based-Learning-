@@ -187,29 +187,14 @@ def create_all_features(df, target_col):
     return df_features, feature_cols
 
 
-def prepare_train_test_split(df_features, target_col, test_size=0.2):
+def prepare_train_test_split(df_features, target_col, test_size=0.15, val_size=0.15):
     """
-    Split data into training and testing sets.
-    
-    IMPORTANT: Time series data must NOT be shuffled!
-    We use chronological split (first 80% train, last 20% test).
-    
-    Parameters:
-    -----------
-    df_features : pd.DataFrame
-        DataFrame with features
-    target_col : str
-        Target column name
-    test_size : float
-        Fraction of data for testing (default 0.2 = 20%)
-    
-    Returns:
-    --------
-    X_train, X_test, y_train, y_test : pd.DataFrame / pd.Series
-        Train and test splits
+    Split data into Train (70%), Validation (15%), and Test (15%).
     """
     
-    split_idx = int(len(df_features) * (1 - test_size))
+    total_len = len(df_features)
+    test_split_idx = int(total_len * (1 - test_size))
+    val_split_idx = int(total_len * (1 - test_size - val_size))
     
     
     feature_cols = [col for col in df_features.columns if col != target_col]
@@ -218,40 +203,32 @@ def prepare_train_test_split(df_features, target_col, test_size=0.2):
     y = df_features[target_col]
     
     
-    X_train = X.iloc[:split_idx]
-    X_test = X.iloc[split_idx:]
-    y_train = y.iloc[:split_idx]
-    y_test = y.iloc[split_idx:]
+    X_train = X.iloc[:val_split_idx]
+    y_train = y.iloc[:val_split_idx]
     
-    print(f"✅ Train-test split (chronological):")
-    print(f"   Training: {len(X_train)} samples ({100*(1-test_size):.0f}%)")
-    print(f"   Testing:  {len(X_test)} samples ({100*test_size:.0f}%)")
+    X_val = X.iloc[val_split_idx:test_split_idx]
+    y_val = y.iloc[val_split_idx:test_split_idx]
     
-    return X_train, X_test, y_train, y_test
+    X_test = X.iloc[test_split_idx:]
+    y_test = y.iloc[test_split_idx:]
+    
+    print(f"✅ 3-Way Split Complete:")
+    print(f"   Training:   {len(X_train)} samples")
+    print(f"   Validation: {len(X_val)} samples")
+    print(f"   Testing:    {len(X_test)} samples")
+    
+    
+    X_train.to_csv('data/X_train.csv', index=True)
+    X_val.to_csv('data/X_val.csv', index=True)
+    X_test.to_csv('data/X_test.csv', index=True)
+    y_train.to_csv('data/y_train.csv', index=True)
+    y_val.to_csv('data/y_val.csv', index=True)
+    y_test.to_csv('data/y_test.csv', index=True)
+    
+    return X_train, X_val, X_test, y_train, y_val, y_test
+    
 
 
-if __name__ == "__main__":
-    print("Testing feature engineering with sample data...\n")
-    
-    
-    np.random.seed(42)
-    dates = pd.date_range('2023-01-01', periods=200, freq='D')
-    
-    sample_df = pd.DataFrame({
-        'ATM_1': np.random.randint(30000, 80000, 200).astype(float)
-    }, index=dates)
-    
-    
-    df_features, feature_cols = create_all_features(sample_df, 'ATM_1')
-    
-    
-    X_train, X_test, y_train, y_test = prepare_train_test_split(
-        df_features, 'ATM_1', test_size=0.2
-    )
-    
-    print(f"\n✅ Feature engineering test successful!")
-    print(f"\nSample of features:")
-    print(df_features.head(3))
 
 def run_feature_engineering_on_real_data(atm_column='ATM_1'):
     """
