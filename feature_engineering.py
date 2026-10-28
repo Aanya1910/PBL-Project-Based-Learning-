@@ -298,9 +298,9 @@ def run_feature_engineering_on_real_data(atm_column='ATM_1'):
     print(f"\n✅ Features saved to: {output_path}")
     
 
-    X_train, X_test, y_train, y_test = prepare_train_test_split(
-        df_features, atm_column, test_size=0.2
-    )
+X_train, X_val, X_test, y_train, y_val, y_test = prepare_train_test_split(
+    df_features, 'T1', test_size=0.15, val_size=0.15
+)
     
     
     X_train.to_csv('data/X_train.csv', index=True)
