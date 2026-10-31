@@ -6,6 +6,8 @@ import numpy as np
 import plotly.graph_objects as go
 import plotly.express as px
 from datetime import datetime, timedelta
+from utils.preprocessing import handle_missing_values, cap_outliers
+from utils.feature_engineering import create_all_features, prepare_train_test_split
 import pickle
 
 st.set_page_config(
@@ -19,25 +21,25 @@ st.markdown("""
     <style>
     .main-header {
         font-size: 2.5rem;
-        color: #1f77b4;
+        color: blue;
         text-align: center;
         padding: 1rem;
     }
     .kpi-card {
-        background-color: #f0f2f6;
+        background-color: rgba(160, 160, 255, 0.1);
         padding: 1rem;
         border-radius: 10px;
         text-align: center;
         box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
     }
     .alert-green {
-        background-color: #d4edda;
+        background-color: rgba(212, 237, 218, 0.5);
         padding: 1rem;
         border-radius: 10px;
         border-left: 5px solid #28a745;
     }
     .alert-yellow {
-        background-color: #fff3cd;
+        background-color: rgba(255, 243, 205, 0.5);
         padding: 1rem;
         border-radius: 10px;
         border-left: 5px solid #ffc107;
@@ -56,22 +58,32 @@ st.markdown("""
 @st.cache_data
 def load_data():
     """
-    Load the NN5 dataset.
-    For now, we'll create sample data if the file doesn't exist.
+    Load and preprocess the NN5 dataset.
     """
     try:
-      
-        df = pd.read_csv(
-            'data/nn5_daily_dataset_without_missing_values.ts',
-            sep='\t',
-            index_col=0
-        )
-        df.index = pd.to_datetime(df.index)
+        # Try to load cleaned data first
+        df = pd.read_csv('data/nn5_cleaned.csv', index_col=0, parse_dates=True)
         return df
     except FileNotFoundError:
-      
-        st.warning("⚠️ NN5 dataset not found. Using sample data for demo.")
-        return generate_sample_data()
+        try:
+            # Load raw NN5 dataset and preprocess
+            df = pd.read_csv(
+                'data/nn5_daily_dataset_without_missing_values.ts',
+                sep='\t',
+                index_col=0
+            )
+            df.index = pd.to_datetime(df.index)
+            
+            # Preprocess
+            df = handle_missing_values(df)
+            df = cap_outliers(df)
+            
+            # Save cleaned version
+            df.to_csv('data/nn5_cleaned.csv')
+            return df
+        except FileNotFoundError:
+            st.warning("⚠️ NN5 dataset not found. Using sample data for demo.")
+            return generate_sample_data()
 
 
 def generate_sample_data():
@@ -330,7 +342,7 @@ with col_right:
             <h3>Risk Level: {risk_level}</h3>
             <p>{risk_msg}</p>
         </div>
-    "", unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
 
 st.markdown("---")
 st.subheader("🔍 Feature Importance (SHAP)")
@@ -408,10 +420,3 @@ st.dataframe(display_df, use_container_width=True)
 
 
 st.markdown("---")
-st.markdown("""
-    <div style="text-align: center; color: gray; padding: 1rem;">
-        <p>ATM Cash Demand Forecasting | BCA AI & DS Project</p>
-        <p>Team: Aanya Vedwal, Ashmita Rawat, Himani, Kumari Bhawana</p>
-        <p>Mentor: Mr. Nikhil Bisht</p>
-    </div>
-""", unsafe_allow_html=True)

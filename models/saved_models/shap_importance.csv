@@ -1,0 +1,17 @@
+feature,mean_abs_shap
+T1_lag_7,5.3201203
+T1_expanding_mean,3.5878973
+T1_rolling_mean_7,3.189965
+T1_lag_14,1.563067
+day_of_week,1.2871275
+T1_rolling_std_7,0.9674723
+T1_lag_1,0.7812517
+T1_lag_30,0.76148224
+T1_rolling_std_14,0.48990345
+T1_rolling_mean_14,0.4882348
+month,0.2802589
+is_weekend,0.2468498
+day_of_month,0.24264757
+quarter,0.04846486
+is_salary_day,0.008529317
+is_month_end,0.008395623

@@ -1,0 +1,17 @@
+feature,importance
+T1_lag_7,0.39057246
+is_weekend,0.098809406
+T1_lag_14,0.09664128
+T1_rolling_mean_7,0.06862489
+T1_rolling_std_7,0.05440421
+day_of_week,0.04772038
+T1_lag_1,0.035652567
+T1_lag_30,0.03257328
+T1_rolling_mean_14,0.030630182
+T1_expanding_mean,0.026126249
+is_month_end,0.025374277
+T1_rolling_std_14,0.024307353
+month,0.019646335
+is_salary_day,0.019204775
+day_of_month,0.016118083
+quarter,0.013594245
