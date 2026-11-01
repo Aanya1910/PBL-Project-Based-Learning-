@@ -66,7 +66,7 @@ The project goals and intended dashboard functionality are defined in the origin
               │ • ARIMA                   │
               │ • Random Forest           │
               │ • XGBoost                 │
-              │ • LSTM                    │
+              │ • Gradient Boosting       │
               └─────────────┬─────────────┘
                             ↓
                  ┌─────────────────────┐
@@ -138,11 +138,11 @@ An ensemble machine learning algorithm that combines multiple decision trees to 
 
 A gradient-boosting algorithm that can model complex relationships between input features and cash demand.
 
-4. LSTM
+4. Gradient Boosting
 
 A deep-learning model designed for sequential and time-series data. It can learn patterns from historical demand sequences.
 
-The proposal specifies ARIMA, Random Forest, XGBoost, and LSTM as the four forecasting models for the final project.
+The proposal specifies ARIMA, Random Forest, XGBoost, and Gradient Boosting as the four forecasting models for the final project.
 
 
 📊 Dataset
