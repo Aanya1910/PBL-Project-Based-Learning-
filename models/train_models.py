@@ -140,3 +140,51 @@ def train_xgboost(X_train, X_val, X_test, y_train, y_val, y_test):
 # ============================================================
 # MODEL 4: HIST GRADIENT BOOSTING (Replaces LSTM)
 # ============================================================
+
+
+
+def train_all_models():
+    print("=" * 60)
+    print("TRAINING ALL MODELS (WITH VALIDATION SPLIT)")
+    print("=" * 60)
+    
+    X_train, X_val, X_test, y_train, y_val, y_test = load_prepared_data()
+    all_results = []
+    
+    
+    _, _, arima_results = train_arima(y_train, y_test)
+    if arima_results:
+        all_results.append(arima_results)
+    
+    
+    _, _, rf_results, rf_acc = train_random_forest(X_train, X_val, X_test, y_train, y_val, y_test)
+    if rf_results:
+        rf_results['Accuracy_R2'] = rf_acc
+        all_results.append(rf_results)
+    
+    
+    _, _, xgb_results, xgb_acc = train_xgboost(X_train, X_val, X_test, y_train, y_val, y_test)
+    if xgb_results:
+        xgb_results['Accuracy_R2'] = xgb_acc
+        all_results.append(xgb_results)
+    
+    
+    _, _, gb_results, gb_acc = train_gradient_boosting(X_train, X_val, X_test, y_train, y_val, y_test)
+    if gb_results:
+        gb_results['Accuracy_R2'] = gb_acc
+        all_results.append(gb_results)
+    
+    
+    comparison = pd.DataFrame(all_results)
+    comparison = comparison.sort_values('sMAPE')
+    
+    print("\n" + "=" * 60)
+    print("MODEL COMPARISON")
+    print("=" * 60)
+    print(comparison.to_string(index=False))
+    
+    comparison.to_csv('models/saved_models/model_comparison.csv', index=False)
+    print(f"\n✅ Saved to: models/saved_models/model_comparison.csv")
+
+if __name__ == "__main__":
+    train_all_models()
