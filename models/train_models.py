@@ -78,3 +78,34 @@ def train_arima(y_train, y_test, order=(1, 1, 1)):
         print(f"❌ ARIMA failed: {e}")
         return None, None, None
 
+
+def train_random_forest(X_train, X_val, X_test, y_train, y_val, y_test):
+    print("\n" + "="*50)
+    print("TRAINING RANDOM FOREST")
+    print("="*50)
+    
+    rf = RandomForestRegressor(
+        n_estimators=100, max_depth=15, min_samples_split=5, 
+        min_samples_leaf=2, random_state=42, n_jobs=-1
+    )
+    
+    rf.fit(X_train, y_train)
+    
+    # Validation Performance
+    val_pred = rf.predict(X_val)
+    val_mae = mean_absolute_error(y_val, val_pred)
+    
+    # Test Performance
+    y_pred = rf.predict(X_test)
+    results = evaluate_model(y_test, y_pred, 'Random Forest')
+    accuracy = r2_score(y_test, y_pred)
+    
+    print(f"Validation MAE: {val_mae:,.2f}")
+    print(f"R² Accuracy Score: {accuracy*100:.2f}%")
+    
+    # Save model
+    with open('models/saved_models/random_forest.pkl', 'wb') as f:
+        pickle.dump(rf, f)
+        
+    return rf, y_pred, results, f"{accuracy*100:.2f}%"
+
