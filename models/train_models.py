@@ -59,3 +59,22 @@ def load_prepared_data():
     return X_train, X_val, X_test, y_train, y_val, y_test
 
 
+
+def train_arima(y_train, y_test, order=(1, 1, 1)):
+    print("\n" + "="*50)
+    print("TRAINING ARIMA")
+    print("="*50)
+    try:
+        model = ARIMA(y_train, order=order)
+        fitted_model = model.fit()
+        forecast = fitted_model.forecast(steps=len(y_test))
+        results = evaluate_model(y_test, forecast, f'ARIMA{order}')
+        
+        os.makedirs('models/saved_models', exist_ok=True)
+        with open('models/saved_models/arima_model.pkl', 'wb') as f:
+            pickle.dump(fitted_model, f)
+        return fitted_model, forecast, results
+    except Exception as e:
+        print(f"❌ ARIMA failed: {e}")
+        return None, None, None
+
