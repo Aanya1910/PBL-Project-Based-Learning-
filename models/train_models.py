@@ -42,8 +42,6 @@ def evaluate_model(y_true, y_pred, model_name):
     
     return results
 
-
-
 def load_prepared_data():
     """Load the train-validation-test splits."""
     X_train = pd.read_csv('data/X_train.csv', index_col=0, parse_dates=True)
@@ -59,6 +57,7 @@ def load_prepared_data():
     return X_train, X_val, X_test, y_train, y_val, y_test
 
 
+# MODEL 1: ARIMA
 
 def train_arima(y_train, y_test, order=(1, 1, 1)):
     print("\n" + "="*50)
@@ -78,6 +77,7 @@ def train_arima(y_train, y_test, order=(1, 1, 1)):
         print(f"❌ ARIMA failed: {e}")
         return None, None, None
 
+# MODEL 2: RANDOM FOREST 
 
 def train_random_forest(X_train, X_val, X_test, y_train, y_val, y_test):
     print("\n" + "="*50)
@@ -109,6 +109,7 @@ def train_random_forest(X_train, X_val, X_test, y_train, y_val, y_test):
         
     return rf, y_pred, results, f"{accuracy*100:.2f}%"
 
+# MODEL 3: XG BOOST
 
 def train_xgboost(X_train, X_val, X_test, y_train, y_val, y_test):
     print("\n" + "="*50)
@@ -137,11 +138,42 @@ def train_xgboost(X_train, X_val, X_test, y_train, y_val, y_test):
         
     return xgb_model, y_pred, results, f"{accuracy*100:.2f}%"
 
-# ============================================================
-# MODEL 4: HIST GRADIENT BOOSTING (Replaces LSTM)
-# ============================================================
+# MODEL 4: HIST GRADIENT BOOSTING 
 
+def train_gradient_boosting(X_train, X_val, X_test, y_train, y_val, y_test):
+    print("\n" + "="*50)
+    print("TRAINING HIST GRADIENT BOOSTING")
+    print("="*50)
+    
+    # Scikit-learn's optimized gradient boosting
+    gb_model = HistGradientBoostingRegressor(
+        max_iter=200,
+        max_depth=6,
+        learning_rate=0.05,
+        early_stopping=True,
+        validation_fraction=0.15, # Uses validation automatically
+        random_state=42
+    )
+    
+    # For HistGradientBoosting, we combine train and val for fitting
+    # because it handles early stopping internally via validation_fraction
+    X_train_combined = pd.concat([X_train, X_val])
+    y_train_combined = pd.concat([y_train, y_val])
+    
+    gb_model.fit(X_train_combined, y_train_combined)
+    
+    y_pred = gb_model.predict(X_test)
+    results = evaluate_model(y_test, y_pred, 'Gradient Boosting')
+    accuracy = r2_score(y_test, y_pred)
+    
+    print(f"R² Accuracy Score: {accuracy*100:.2f}%")
+    
+    with open('models/saved_models/gradient_boosting.pkl', 'wb') as f:
+        pickle.dump(gb_model, f)
+        
+    return gb_model, y_pred, results, f"{accuracy*100:.2f}%"
 
+#MAIN FUNCTION
 
 def train_all_models():
     print("=" * 60)
