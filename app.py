@@ -163,7 +163,7 @@ days_until_refill = st.sidebar.slider(
 st.sidebar.markdown("### 🤖 Model Selection")
 model_choice = st.sidebar.selectbox(
     "Select Model",
-    options=['LSTM', 'XGBoost', 'Random Forest', 'ARIMA'],
+    options=['Gradient Boosting', 'XGBoost', 'Random Forest', 'ARIMA'],
     index=0
 )
 
