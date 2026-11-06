@@ -11,7 +11,6 @@ from statsmodels.tsa.arima.model import ARIMA
 
 warnings.filterwarnings('ignore')
 
-
 def smape(y_true, y_pred):
     """Symmetric Mean Absolute Percentage Error."""
     y_true = np.array(y_true)
@@ -54,7 +53,6 @@ def load_prepared_data():
     print(f"✅ Data loaded:")
     print(f"   Train: {X_train.shape}, Val: {X_val.shape}, Test: {X_test.shape}")
     return X_train, X_val, X_test, y_train, y_val, y_test
-
 
 # MODEL 1: ARIMA
 
