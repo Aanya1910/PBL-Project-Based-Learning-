@@ -376,3 +376,8 @@ def run_preprocessing_on_real_data():
         print("\n✅ Summary saved to: data/preprocessing_summary.json")
 
     return df_clean
+if __name__ == "__main__":
+    print("=" * 60)
+    print("RUNNING PREPROCESSING ON REAL NN5 DATASET")
+    print("=" * 60)
+    df = run_preprocessing_on_real_data()
