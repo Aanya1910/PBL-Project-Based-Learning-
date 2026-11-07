@@ -75,7 +75,7 @@ def load_nn5_dataset(filepath):
             padded = values + [np.nan] * (max_len - len(values))
             df[atm_id] = padded
         
-        print(f"✅ Loaded dataset: {df.shape[0]} days × {df.shape[1]} ATMs")
+        print(f"âœ… Loaded dataset: {df.shape[0]} days Ã— {df.shape[1]} ATMs")
         print(f"   Start date: {common_start.date()}")
         print(f"   ATM IDs: {list(df.columns[:5])}... (showing first 5)")
 
@@ -84,10 +84,10 @@ def load_nn5_dataset(filepath):
         return df
         
     except FileNotFoundError:
-        print(f"❌ File not found: {filepath}")
+        print(f"âŒ File not found: {filepath}")
         return None
     except Exception as e:
-        print(f"❌ Error loading dataset: {e}")
+        print(f"âŒ Error loading dataset: {e}")
         import traceback
         traceback.print_exc()
         return None
@@ -118,7 +118,7 @@ def handle_missing_values(df):
         df_clean[col] = temp['value'].values
     
     total_missing = df_clean.isna().sum().sum()
-    print(f"✅ Missing values handled. Remaining NaN: {total_missing}")
+    print(f"âœ… Missing values handled. Remaining NaN: {total_missing}")
     return df_clean
 
 
@@ -127,8 +127,8 @@ def detect_outliers_iqr(df, multiplier=1.5):
     Detect outliers using the IQR method.
     
     IQR = Q3 - Q1
-    Lower bound = Q1 - multiplier × IQR
-    Upper bound = Q3 + multiplier × IQR
+    Lower bound = Q1 - multiplier Ã— IQR
+    Upper bound = Q3 + multiplier Ã— IQR
     
     Parameters:
     -----------
@@ -152,7 +152,7 @@ def detect_outliers_iqr(df, multiplier=1.5):
     outliers = (df < lower_bound) | (df > upper_bound)
     
     total_outliers = outliers.sum().sum()
-    print(f"✅ Outliers detected: {total_outliers} ({100*total_outliers/df.size:.2f}%)")
+    print(f"âœ… Outliers detected: {total_outliers} ({100*total_outliers/df.size:.2f}%)")
     return outliers
 
 
@@ -189,7 +189,7 @@ def cap_outliers(df, multiplier=1.5):
     # Clip values to bounds
     df_capped = df_capped.clip(lower=lower_bound, upper=upper_bound, axis=1)
     
-    print(f"✅ Outliers capped to IQR bounds")
+    print(f"âœ… Outliers capped to IQR bounds")
     return df_capped
 
 
@@ -229,7 +229,7 @@ def normalize_minmax(df):
         
         scalers[col] = {'min': col_min, 'max': col_max}
     
-    print(f"✅ Data normalized to [0, 1] range")
+    print(f"âœ… Data normalized to [0, 1] range")
     return df_norm, scalers
 
 
@@ -293,7 +293,7 @@ def preprocess_pipeline(filepath, save_clean=True):
     if save_clean:
         output_path = 'data/nn5_cleaned.csv'
         df.to_csv(output_path)
-        print(f"✅ Cleaned data saved to: {output_path}")
+        print(f"âœ… Cleaned data saved to: {output_path}")
     
     print("=" * 50)
     print("PREPROCESSING COMPLETE")
@@ -326,62 +326,6 @@ if __name__ == "__main__":
     df_clean = cap_outliers(df_clean)
     df_norm, scalers = normalize_minmax(df_clean)
     
-    print(f"\n✅ Pipeline test successful!")
+    print(f"\nâœ… Pipeline test successful!")
     print(f"Cleaned shape: {df_clean.shape}")
     print(f"Missing values after: {df_clean.isna().sum().sum()}")
-
-    
-# RUN ON REAL NN5 DATA
-
-def run_preprocessing_on_real_data():
-    """
-    Run the complete preprocessing pipeline on the real NN5 dataset.
-    This function should be called after the dataset is downloaded.
-    """
-    import os
-    
-    # Path to the NN5 dataset
-    dataset_path = 'data/nn5_daily_dataset_without_missing_values.ts'
-    
-    # Check if file exists
-    if not os.path.exists(dataset_path):
-        print("❌ Dataset not found!")
-        print(f"Please download the NN5 dataset and place it at: {dataset_path}")
-        print("\nDownload link: https://zenodo.org/record/4656118")
-        return None
-    
-    # Run the preprocessing pipeline
-    df_clean = preprocess_pipeline(dataset_path, save_clean=True)
-    
-    if df_clean is not None:
-        print("\n✅ Preprocessing complete!")
-        print(f"Shape: {df_clean.shape}")
-        print(f"Date range: {df_clean.index.min()} to {df_clean.index.max()}")
-        print(f"\nFirst 5 rows:")
-        print(df_clean.head())
-        
-        # Save a summary
-        summary = {
-            'total_records': df_clean.shape[0] * df_clean.shape[1],
-            'num_atms': df_clean.shape[1],
-            'num_days': df_clean.shape[0],
-            'date_start': str(df_clean.index.min()),
-            'date_end': str(df_clean.index.max()),
-            'missing_values': df_clean.isna().sum().sum()
-        }
-        
-        import json
-        with open('data/preprocessing_summary.json', 'w') as f:
-            json.dump(summary, f, indent=2)
-        
-        print(f"\n✅ Summary saved to: data/preprocessing_summary.json")
-    
-    return df_clean
-
-
-if __name__ == "__main__":
-    # When run directly, execute the real data preprocessing
-    print("=" * 60)
-    print("RUNNING PREPROCESSING ON REAL NN5 DATASET")
-    print("=" * 60)
-    df = run_preprocessing_on_real_data()
