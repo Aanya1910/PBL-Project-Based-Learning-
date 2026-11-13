@@ -347,3 +347,11 @@ with col_right:
 st.markdown("---")
 st.subheader("🔍 Feature Importance (SHAP)")
 
+feature_importance = {
+    'Day of Week': 0.35,
+    'Salary Day (1st/7th)': 0.25,
+    'Lag-1 (Yesterday)': 0.18,
+    'Holiday Indicator': 0.12,
+    'Rolling Average (7-day)': 0.10
+        }
+    
