@@ -408,4 +408,16 @@ with col3:
         delta=f"+₹{int(monthly_savings):,}/month"
     )
 
-    
+    st.markdown("---")
+st.subheader("📋 Recent Data")
+
+display_df = pd.DataFrame({
+    'Date': list(historical.index[-10:]) + list(forecast_dates),
+    'Type': ['Historical'] * 10 + ['Forecast'] * forecast_days,
+    'Cash Demand (₹)': list(historical.values[-10:]) + [int(v) for v in forecast_values]
+})
+
+st.dataframe(display_df, use_container_width=True)
+
+
+st.markdown("---")
