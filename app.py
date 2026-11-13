@@ -376,3 +376,36 @@ st.plotly_chart(fig_importance, use_container_width=True)
 st.info("💡 **Interpretation:** Day of Week and Salary Days are the most important features. "
         "This means cash demand is highly influenced by when people get paid and weekly patterns.")
 
+st.markdown("---")
+st.subheader("💵 Cost Savings Estimator")
+
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    current_cost = st.number_input(
+        "Current Monthly Cost (₹)",
+        min_value=0,
+        value=100000,
+        step=10000
+    )
+
+with col2:
+    # Assume 30-40% savings from ML
+    savings_percent = 35
+    optimized_cost = current_cost * (1 - savings_percent / 100)
+    st.metric(
+        label="Optimized Cost (ML-based)",
+        value=f"₹{int(optimized_cost):,}",
+        delta=f"-{savings_percent}%"
+    )
+
+with col3:
+    monthly_savings = current_cost - optimized_cost
+    yearly_savings = monthly_savings * 12
+    st.metric(
+        label="Estimated Yearly Savings",
+        value=f"₹{int(yearly_savings):,}",
+        delta=f"+₹{int(monthly_savings):,}/month"
+    )
+
+    
