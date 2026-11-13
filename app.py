@@ -355,3 +355,7 @@ feature_importance = {
     'Rolling Average (7-day)': 0.10
         }
     
+fig_importance = go.Figure(go.Bar(
+    x=list(feature_importance.values()),
+    y=list(feature_importance.keys()),
+    orientation='h',
