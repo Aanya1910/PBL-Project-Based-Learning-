@@ -359,3 +359,16 @@ fig_importance = go.Figure(go.Bar(
     x=list(feature_importance.values()),
     y=list(feature_importance.keys()),
     orientation='h',
+
+    marker=dict(color=['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd'])
+))
+
+fig_importance.update_layout(
+    title="Which Features Drive Predictions?",
+    xaxis_title="SHAP Value (Impact on Prediction)",
+    yaxis_title="Feature",
+    height=350,
+    margin=dict(l=150)
+)
+
+
