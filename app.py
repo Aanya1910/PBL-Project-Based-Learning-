@@ -371,4 +371,8 @@ fig_importance.update_layout(
     margin=dict(l=150)
 )
 
+st.plotly_chart(fig_importance, use_container_width=True)
+
+st.info("💡 **Interpretation:** Day of Week and Salary Days are the most important features. "
+        "This means cash demand is highly influenced by when people get paid and weekly patterns.")
 
