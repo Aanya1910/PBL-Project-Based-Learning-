@@ -246,6 +246,34 @@ The proposed deliverables specifically include a Python/Streamlit dashboard for 
 
 📁 Project Structure
 
+PBL-Project-Based-Learning/
+│
+├── data/
+│   ├── X_test.csv
+│   ├── X_train.csv
+│   ├── X_val.csv
+│   ├── y_test.csv
+│   ├── y_train.csv
+│   ├── y_val.csv
+│   ├── features_T1.csv
+│   ├── nn5_cleaned.csv
+│   ├── nn5_daily_dataset_without_missing_values.ts
+│   ├── correlation_heatmap_T1.png
+│   └── preprocessing_summary.json
+│
+├── models/
+│   ├── saved_models/
+│   ├── __init__.py
+│   ├── evaluate.py
+│   ├── explain.py
+│   └── train_models.py
+│
+├── utils/
+│   ├── feature_engineering.py
+│   └── preprocessing.py
+│
+├── README.md
+└── app.py
 
 «The folder structure can be updated as the project implementation progresses.»
 
