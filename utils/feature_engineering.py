@@ -3,10 +3,8 @@
 
 import os
 import sys
-
 import pandas as pd
 import numpy as np
-
 
 def safe_print(message):
     """Print without crashing when the console encoding cannot handle Unicode."""
@@ -14,7 +12,6 @@ def safe_print(message):
         print(message)
     except UnicodeEncodeError:
         print(message.encode('ascii', 'ignore').decode('ascii'))
-
 
 def create_temporal_features(df):
     """Create calendar-based features from the datetime index."""
@@ -63,7 +60,7 @@ def create_all_features(df, target_col):
     safe_print(f"[OK] Total features created: {len(feature_cols)}")
     return df_features, feature_cols
 
-
+#Train, Test and Validation split
 def prepare_train_test_split(df_features, target_col, test_size=0.15, val_size=0.15):
     """
     Split data into Train (70%), Validation (15%), and Test (15%).
@@ -105,7 +102,7 @@ def prepare_train_test_split(df_features, target_col, test_size=0.15, val_size=0
     
     return X_train, X_val, X_test, y_train, y_val, y_test
 
-
+#Running Feature Engineering
 def run_feature_engineering_on_real_data(atm_column='T1'):
     """Run feature engineering on the cleaned NN5 data."""
     cleaned_path = 'data/nn5_cleaned.csv'
