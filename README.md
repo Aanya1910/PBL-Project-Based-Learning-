@@ -50,7 +50,7 @@ The project goals and intended dashboard functionality are defined in the origin
                  │ • Trends            │
                  │ • Weekdays          │
                  │ • Holidays          │
-                 │ • Seasonal Patterns  │
+                 │ • Seasonal Patterns │
                  └──────────┬──────────┘
                             ↓
                  ┌─────────────────────┐
@@ -246,39 +246,6 @@ The proposed deliverables specifically include a Python/Streamlit dashboard for 
 
 📁 Project Structure
 
-ATM-Cash-Demand-Forecasting/
-│
-├── data/
-│   ├── raw/
-│   └── processed/
-│
-├── notebooks/
-│   ├── data_preprocessing.ipynb
-│   ├── exploratory_data_analysis.ipynb
-│   ├── feature_engineering.ipynb
-│   └── model_comparison.ipynb
-│
-├── models/
-│   ├── arima/
-│   ├── random_forest/
-│   ├── xgboost/
-│   └── lstm/
-│
-├── src/
-│   ├── preprocessing.py
-│   ├── feature_engineering.py
-│   ├── train.py
-│   └── prediction.py
-│
-├── dashboard/
-│   └── app.py
-│
-├── results/
-│   ├── graphs/
-│   └── model_comparison/
-│
-├── requirements.txt
-├── README.md
 
 «The folder structure can be updated as the project implementation progresses.»
 
@@ -329,14 +296,7 @@ Kumari Bhawana| Team Member
 
 📚 References
 
-The project references research on ATM cash-demand forecasting using statistical, machine-learning, and deep-learning approaches, including ARIMA, Random Forest, SVR, MLP, LSTM, and neural-network methods.
-
-
-📄 Project Status
-
-Status: 🚧 In Development
-
-The project is being developed phase-by-phase, beginning with dataset understanding and preprocessing and progressing toward model development, comparison, dashboard development, and final integration.
+The project references research on ATM cash-demand forecasting using statistical, machine-learning, and deep-learning approaches, including ARIMA, Random Forest, SVR, MLP, Gradient-Boosting, LSTM, and neural-network methods.
 
 
 ⭐ Acknowledgement
