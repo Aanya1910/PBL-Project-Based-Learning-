@@ -14,4 +14,4 @@ def load_xgboost_model():
         model = pickle.load(f)
     return model
 
-
+ save_shap_importance(shap_values, X_sample)
