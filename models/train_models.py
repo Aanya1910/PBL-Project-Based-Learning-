@@ -11,7 +11,34 @@ from statsmodels.tsa.arima.model import ARIMA
 
 warnings.filterwarnings('ignore')
 
+def smape(y_true, y_pred):
+    """Symmetric Mean Absolute Percentage Error."""
+    y_true = np.array(y_true)
+    y_pred = np.array(y_pred)
+    denominator = (np.abs(y_true) + np.abs(y_pred)) / 2
+    diff = np.abs(y_true - y_pred) / denominator
+    diff[denominator == 0] = 0
+    return 100 * np.mean(diff)
 
+def evaluate_model(y_true, y_pred, model_name):
+    """Calculate all three metrics."""
+    mae = mean_absolute_error(y_true, y_pred)
+    rmse = np.sqrt(mean_squared_error(y_true, y_pred))
+    smape_val = smape(y_true, y_pred)
+    
+    results = {
+        'model': model_name,
+        'MAE': round(mae, 2),
+        'RMSE': round(rmse, 2),
+        'sMAPE': round(smape_val, 2)
+    }
+    
+    print(f"\nMODEL: {model_name}")
+    print(f"MAE:   {mae:,.2f}")
+    print(f"RMSE:  {rmse:,.2f}")
+    print(f"sMAPE: {smape_val:.2f}%")
+    
+    return results
 
 def load_prepared_data():
     """Load the train-validation-test splits."""
