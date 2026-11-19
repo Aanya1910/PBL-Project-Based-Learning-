@@ -34,3 +34,16 @@ def compute_shap_values(model, X_test, max_samples=100):
     
     return explainer, shap_values, X_sample
 
+
+def plot_shap_summary(shap_values, X_sample):
+    """
+    Create SHAP summary plot (beeswarm).
+    """
+    plt.figure(figsize=(10, 6))
+    shap.summary_plot(shap_values, X_sample, show=False)
+    plt.tight_layout()
+    plt.savefig('models/saved_models/shap_summary.png', dpi=100)
+    print("✅ SHAP summary plot saved")
+    plt.close()
+
+
