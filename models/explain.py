@@ -18,3 +18,36 @@ def load_comparison():
         return None
 
 
+def create_comparison_chart(comparison):
+    """
+    Create a bar chart comparing all models across metrics.
+    """
+    fig = go.Figure()
+    
+    metrics = ['MAE', 'RMSE', 'sMAPE']
+    colors = ['#1f77b4', '#ff7f0e', '#2ca02c']
+    
+    for i, metric in enumerate(metrics):
+        fig.add_trace(go.Bar(
+            name=metric,
+            x=comparison['model'],
+            y=comparison[metric],
+            marker_color=colors[i],
+            text=comparison[metric].round(2),
+            textposition='auto'
+        ))
+    
+    fig.update_layout(
+        title='Model Comparison: MAE, RMSE, and sMAPE',
+        xaxis_title='Model',
+        yaxis_title='Error',
+        barmode='group',
+        height=500
+    )
+    
+    fig.write_html('models/saved_models/comparison_chart.html')
+    print("✅ Comparison chart saved")
+    return fig
+
+
+
