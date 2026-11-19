@@ -1,54 +1,11 @@
-# models/explain.py
-# SHAP values for model explainability
+# models/evaluate.py
+# Model evaluation and comparison
 
 import pandas as pd
 import numpy as np
-import pickle
-import shap
 import matplotlib.pyplot as plt
+import plotly.graph_objects as go
+import pickle
+import os
 
 
-def load_xgboost_model():
-    """Load the trained XGBoost model."""
-    with open('models/saved_models/xgboost.pkl', 'rb') as f:
-        model = pickle.load(f)
-    return model
-
- save_shap_importance(shap_values, X_sample)
-
-def compute_shap_values(model, X_test, max_samples=100):
-    """
-    Compute SHAP values for the XGBoost model.
-    
-    SHAP explains which features push predictions up or down.
-    """
-    print("Computing SHAP values...")
-    
-    # Use a sample for speed
-    X_sample = X_test.iloc[:max_samples]
-    
-    # Create explainer
-    explainer = shap.TreeExplainer(model)
-    shap_values = explainer.shap_values(X_sample)
-    
-    print(f"✅ SHAP values computed for {len(X_sample)} samples")
-    
-    return explainer, shap_values, X_sample
-
-
-if __name__ == "__main__":
-    # Load data
-    X_test = pd.read_csv('data/X_test.csv', index_col=0, parse_dates=True)
-    
-    # Load model
-    model = load_xgboost_model()
-    
-    # Compute SHAP
-    explainer, shap_values, X_sample = compute_shap_values(model, X_test)
-    
-    # Create plots
-    plot_shap_summary(shap_values, X_sample)
-    plot_shap_bar(shap_values, X_sample)
-    
-    # Save importance
-    importance = save_shap_importance(shap_values, X_sample)
