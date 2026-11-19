@@ -275,8 +275,6 @@ PBL-Project-Based-Learning/
 ├── README.md
 └── app.py
 
-«The folder structure can be updated as the project implementation progresses.»
-
 
 📌 Expected Outcomes
 
@@ -316,8 +314,8 @@ It also assumes that ATM withdrawal patterns are influenced by factors such as t
 👩‍💻 Team Members
 
 Name| Role
-Aanya Vedwal| Team Lead
 Ashmita Rawat| Team Member
+Aanya Vedwal| Team Member
 Himani| Team Member
 Kumari Bhawana| Team Member
 
@@ -332,4 +330,4 @@ The project references research on ATM cash-demand forecasting using statistical
 This project is developed as part of the BCA (AI & DS) academic project.
 
 Project: ATM Cash Demand Forecasting
-Team: Aanya Vedwal, Ashmita Rawat, Himani, Kumari Bhawana
+Team: Ashmita Rawat, Aanya Vedwal, Himani, Kumari Bhawana
