@@ -15,3 +15,22 @@ def load_xgboost_model():
     return model
 
 
+def compute_shap_values(model, X_test, max_samples=100):
+    """
+    Compute SHAP values for the XGBoost model.
+    
+    SHAP explains which features push predictions up or down.
+    """
+    print("Computing SHAP values...")
+    
+    # Use a sample for speed
+    X_sample = X_test.iloc[:max_samples]
+    
+    # Create explainer
+    explainer = shap.TreeExplainer(model)
+    shap_values = explainer.shap_values(X_sample)
+    
+    print(f"✅ SHAP values computed for {len(X_sample)} samples")
+    
+    return explainer, shap_values, X_sample
+
