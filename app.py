@@ -53,8 +53,9 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-@st.cache_data
 
+
+@st.cache_data
 def load_data():
     """
     Load and preprocess the NN5 dataset.
@@ -83,6 +84,7 @@ def load_data():
         except FileNotFoundError:
             st.warning("⚠️ NN5 dataset not found. Using sample data for demo.")
             return generate_sample_data()
+
 
 def generate_sample_data():
     """
@@ -120,6 +122,7 @@ def generate_sample_data():
     
     df = pd.DataFrame(data, index=dates)
     return df
+
 
 st.sidebar.title("🏧 ATM Forecast Controls")
 st.sidebar.markdown("---")
@@ -350,13 +353,12 @@ feature_importance = {
     'Lag-1 (Yesterday)': 0.18,
     'Holiday Indicator': 0.12,
     'Rolling Average (7-day)': 0.10
-        }
-    
+}
+
 fig_importance = go.Figure(go.Bar(
     x=list(feature_importance.values()),
     y=list(feature_importance.keys()),
     orientation='h',
-
     marker=dict(color=['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd'])
 ))
 
@@ -405,7 +407,7 @@ with col3:
         delta=f"+₹{int(monthly_savings):,}/month"
     )
 
-    st.markdown("---")
+st.markdown("---")
 st.subheader("📋 Recent Data")
 
 display_df = pd.DataFrame({
