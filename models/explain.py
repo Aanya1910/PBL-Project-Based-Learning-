@@ -47,3 +47,15 @@ def plot_shap_summary(shap_values, X_sample):
     plt.close()
 
 
+def plot_shap_bar(shap_values, X_sample):
+    """
+    Create SHAP bar plot (global feature importance).
+    """
+    plt.figure(figsize=(10, 6))
+    shap.summary_plot(shap_values, X_sample, plot_type="bar", show=False)
+    plt.tight_layout()
+    plt.savefig('models/saved_models/shap_bar.png', dpi=100)
+    print("✅ SHAP bar plot saved")
+    plt.close()
+
+
