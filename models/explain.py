@@ -59,3 +59,35 @@ def plot_shap_bar(shap_values, X_sample):
     plt.close()
 
 
+def save_shap_importance(shap_values, X_sample):
+    """
+    Save SHAP feature importance as CSV.
+    """
+    importance = pd.DataFrame({
+        'feature': X_sample.columns,
+        'mean_abs_shap': np.abs(shap_values).mean(axis=0)
+    }).sort_values('mean_abs_shap', ascending=False)
+    
+    importance.to_csv('models/saved_models/shap_importance.csv', index=False)
+    print("✅ SHAP importance saved")
+    print(importance.head())
+    
+    return importance
+
+
+if __name__ == "__main__":
+    # Load data
+    X_test = pd.read_csv('data/X_test.csv', index_col=0, parse_dates=True)
+    
+    # Load model
+    model = load_xgboost_model()
+    
+    # Compute SHAP
+    explainer, shap_values, X_sample = compute_shap_values(model, X_test)
+    
+    # Create plots
+    plot_shap_summary(shap_values, X_sample)
+    plot_shap_bar(shap_values, X_sample)
+    
+    # Save importance
+    importance = save_shap_importance(shap_values, X_sample)
