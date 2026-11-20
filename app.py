@@ -56,34 +56,7 @@ st.markdown("""
 
 
 @st.cache_data
-def load_data():
-    """
-    Load and preprocess the NN5 dataset.
-    """
-    try:
-        # Try to load cleaned data first
-        df = pd.read_csv('data/nn5_cleaned.csv', index_col=0, parse_dates=True)
-        return df
-    except FileNotFoundError:
-        try:
-            # Load raw NN5 dataset and preprocess
-            df = pd.read_csv(
-                'data/nn5_daily_dataset_without_missing_values.ts',
-                sep='\t',
-                index_col=0
-            )
-            df.index = pd.to_datetime(df.index)
-            
-            # Preprocess
-            df = handle_missing_values(df)
-            df = cap_outliers(df)
-            
-            # Save cleaned version
-            df.to_csv('data/nn5_cleaned.csv')
-            return df
-        except FileNotFoundError:
-            st.warning("⚠️ NN5 dataset not found. Using sample data for demo.")
-            return generate_sample_data()
+
 
 
 def generate_sample_data():
