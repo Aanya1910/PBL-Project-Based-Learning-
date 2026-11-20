@@ -86,42 +86,7 @@ def load_data():
             st.warning("⚠️ NN5 dataset not found. Using sample data for demo.")
             return generate_sample_data()
 
-def generate_sample_data():
-    """
-    Generate realistic sample ATM data for demonstration.
-    """
-    np.random.seed(42)
-    
-   
-    dates = pd.date_range(start='2023-01-01', end='2024-12-31', freq='D')
 
-    data = {}
-    for atm_id in range(1, 6):
-
-        base = np.random.randint(30000, 80000)
-
-        values = []
-        for date in dates:
-
-            weekend_factor = 0.7 if date.weekday() >= 5 else 1.0
-
-            if date.day in [1, 7] or date.day >= 28:
-                salary_factor = 1.4
-            else:
-                salary_factor = 1.0
-            
-
-            month_factor = 1.2 if date.month in [10, 11, 12] else 1.0
- 
-            noise = np.random.normal(1.0, 0.1)
-            
-            value = base * weekend_factor * salary_factor * month_factor * noise
-            values.append(max(0, int(value)))
-        
-        data[f'ATM_{atm_id}'] = values
-    
-    df = pd.DataFrame(data, index=dates)
-    return df
 
 
 st.sidebar.title("🏧 ATM Forecast Controls")
