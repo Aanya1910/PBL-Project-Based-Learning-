@@ -17,6 +17,15 @@ def load_comparison():
         print("❌ Comparison file not found. Run train_models.py first.")
         return None
 
+def create_comparison_chart(comparison):
+    """
+    Create a bar chart comparing all models across metrics.
+    """
+    fig = go.Figure()
+    
+    metrics = ['MAE', 'RMSE', 'sMAPE']
+    colors = ['#1f77b4', '#ff7f0e', '#2ca02c']
+
 
     
     for i, metric in enumerate(metrics):
