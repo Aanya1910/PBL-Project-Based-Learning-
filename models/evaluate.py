@@ -44,9 +44,7 @@ for i, metric in enumerate(metrics):
         height=500
     )
     
-    
-    
-    fig.write_html('models/saved_models/comparison_chart.html')
+   fig.write_html('models/saved_models/comparison_chart.html')
     print("✅ Comparison chart saved")
     return fig
 
