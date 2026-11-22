@@ -48,7 +48,19 @@ for i, metric in enumerate(metrics):
     print("✅ Comparison chart saved")
     return fig
 
-
+def identify_best_model(comparison):
+    """
+    Identify the best model based on sMAPE.
+    """
+    best = comparison.loc[comparison['sMAPE'].idxmin()]
+    
+    print("\n" + "=" * 50)
+    print("BEST MODEL")
+    print("=" * 50)
+    print(f"Model: {best['model']}")
+    print(f"MAE:   {best['MAE']:,.2f}")
+    print(f"RMSE:  {best['RMSE']:,.2f}")
+    print(f"sMAPE: {best['sMAPE']:.2f}%")
 
     
     # Check if it meets target
