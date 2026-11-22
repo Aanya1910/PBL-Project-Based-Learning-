@@ -63,7 +63,13 @@ def identify_best_model(comparison):
     print(f"sMAPE: {best['sMAPE']:.2f}%")
 
     
+    # Check if it meets target
+    if best['sMAPE'] < 15:
+        print(f"\n✅ Target achieved! sMAPE below 15%")
+    else:
+        print(f"\n⚠️ Target not met. sMAPE above 15%")
     
+    return best
 
 
 if __name__ == "__main__":
