@@ -74,3 +74,7 @@ def identify_best_model(comparison):
     comparison = load_comparison()
     
     
+if comparison is not None:
+        print(comparison.to_string(index=False))
+        create_comparison_chart(comparison)
+        best = identify_best_model(comparison)
