@@ -25,3 +25,41 @@ def create_comparison_chart(comparison):
     
     metrics = ['MAE', 'RMSE', 'sMAPE']
     colors = ['#1f77b4', '#ff7f0e', '#2ca02c']
+
+for i, metric in enumerate(metrics):
+        fig.add_trace(go.Bar(
+            name=metric,
+            x=comparison['model'],
+            y=comparison[metric],
+            marker_color=colors[i],
+            text=comparison[metric].round(2),
+            textposition='auto'
+        ))
+    
+    fig.update_layout(
+        title='Model Comparison: MAE, RMSE, and sMAPE',
+        xaxis_title='Model',
+        yaxis_title='Error',
+        barmode='group',
+        height=500
+    )
+    
+   fig.write_html('models/saved_models/comparison_chart.html')
+    print("✅ Comparison chart saved")
+    return fig
+
+def identify_best_model(comparison):
+    """
+    Identify the best model based on sMAPE.
+    """
+    best = comparison.loc[comparison['sMAPE'].idxmin()]
+    
+    print("\n" + "=" * 50)
+    print("BEST MODEL")
+    print("=" * 50)
+    print(f"Model: {best['model']}")
+    print(f"MAE:   {best['MAE']:,.2f}")
+    print(f"RMSE:  {best['RMSE']:,.2f}")
+    print(f"sMAPE: {best['sMAPE']:.2f}%")
+
+
