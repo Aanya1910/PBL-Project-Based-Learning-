@@ -74,4 +74,20 @@ def save_shap_importance(shap_values, X_sample):
     
     return importance
 
+if __name__ == "__main__":
+    # Load data
+    X_test = pd.read_csv('data/X_test.csv', index_col=0, parse_dates=True)
+    
+    # Load model
+    model = load_xgboost_model()
+    
+    # Compute SHAP
+    explainer, shap_values, X_sample = compute_shap_values(model, X_test)
+    
+    # Create plots
+    plot_shap_summary(shap_values, X_sample)
+    plot_shap_bar(shap_values, X_sample)
+    
+    # Save importance
+    importance = save_shap_importance(shap_values, X_sample)
 
