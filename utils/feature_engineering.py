@@ -6,12 +6,9 @@ import sys
 import pandas as pd
 import numpy as np
 
-def safe_print(message):
-    """Print without crashing when the console encoding cannot handle Unicode."""
-    try:
-        print(message)
-    except UnicodeEncodeError:
-        print(message.encode('ascii', 'ignore').decode('ascii'))
+
+
+
 
 def create_temporal_features(df):
     """Create calendar-based features from the datetime index."""
