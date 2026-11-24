@@ -215,5 +215,3 @@ def train_all_models():
     comparison.to_csv('models/saved_models/model_comparison.csv', index=False)
     print(f"\n✅ Saved to: models/saved_models/model_comparison.csv")
 
-if __name__ == "__main__":
-    train_all_models()
