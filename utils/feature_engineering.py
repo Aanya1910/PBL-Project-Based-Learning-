@@ -135,4 +135,13 @@ def run_feature_engineering_on_real_data(atm_column='T1'):
     
     return df_features, feature_cols
 
+if __name__ == "__main__":
+    safe_print("=" * 60)
+    safe_print("RUNNING FEATURE ENGINEERING ON CLEANED DATA")
+    safe_print("=" * 60)
+    
+    # You can change 'T1' to 'T2', 'T3', etc.
+    df_features, feature_cols = run_feature_engineering_on_real_data(atm_column='T1')
+    
+    safe_print("\n[OK] Feature Engineering Complete. Train/Val/Test splits saved to data/")
 
