@@ -1,7 +1,7 @@
 # utils/feature_engineering.py
 # Create meaningful features from raw time-series data
 
-
+import os
 import sys
 import pandas as pd
 import numpy as np
